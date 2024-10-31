@@ -114,8 +114,8 @@ async function createServer() {
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
 
-  app.listen(9000, () => {
-    console.log(`Listening on http://localhost:9000`);
+  app.listen(9001, () => {
+    console.log(`Listening on http://localhost:9001`);
   });
 }
 

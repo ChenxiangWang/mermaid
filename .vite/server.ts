@@ -9,7 +9,7 @@ async function createServer() {
   // Create Vite server in middleware mode
   const vite = await createViteServer({
     configFile: './vite.config.ts',
-    mode: 'production',
+    mode: 'development',
     server: { middlewareMode: true },
     appType: 'custom', // don't include Vite's default HTML handling middleware
   });
@@ -22,9 +22,9 @@ async function createServer() {
   app.use(express.static('demos'));
   app.use(express.static('cypress/platform'));
 
-  app.listen(9000, () => {
+  app.listen(9001, () => {
     // eslint-disable-next-line no-console
-    console.log(`Listening on http://localhost:9000`);
+    console.log(`Listening on http://localhost:9001`);
   });
 }
 
