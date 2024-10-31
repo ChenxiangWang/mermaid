@@ -101,6 +101,8 @@ export const getBuildConfig = (options: MermaidBuildOptions): BuildOptions => {
     output.splitting = true;
     output.outExtension = { '.js': '.mjs' };
   }
-
+  const jsFooter =
+    (output.footer?.js ?? '') + '\n' + `//# sourceMappingURL=${getFileName(name, options)}.mjs.map`;
+  output.footer = { ...output.footer, js: jsFooter };
   return output;
 };
