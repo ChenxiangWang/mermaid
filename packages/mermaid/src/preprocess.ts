@@ -1,3 +1,7 @@
+/**
+ * preprocess.ts 文件的主要目的是对 Mermaid 图表代码进行标准化处理，以确保在不同环境下的解析一致性。
+ * 通过清理、提取元数据、处理指令和合并配置，这个预处理步骤确保 Mermaid 可以正确解析和渲染复杂的图表内容。
+ */
 import { cleanupComments } from './diagram-api/comments.js';
 import { extractFrontMatter } from './diagram-api/frontmatter.js';
 import type { DiagramMetadata } from './diagram-api/types.js';
@@ -50,10 +54,15 @@ const processDirectives = (code: string) => {
  * @returns The object containing the preprocessed code, title, and configuration.
  */
 export function preprocessDiagram(code: string) {
+  // 清理文本 CR(回车符号等)
   const cleanedCode = cleanupText(code);
+  // 提取frontMatter 来读取用户对图形的配置, 例如颜色等等;
   const frontMatterResult = processFrontmatter(cleanedCode);
   const directiveResult = processDirectives(frontMatterResult.text);
+
+  // 合并配置 frontMatter配置 + directive配置
   const config = cleanAndMerge(frontMatterResult.config, directiveResult.directive);
+  // 去除注释
   code = cleanupComments(directiveResult.text);
   return {
     code,

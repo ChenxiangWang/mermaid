@@ -50,10 +50,22 @@ const IFRAME_NOT_SUPPORTED_MSG = 'The "iframe" tag is not supported by your brow
 // DOMPurify settings for svgCode
 const DOMPURIFY_TAGS = ['foreignobject'];
 const DOMPURIFY_ATTR = ['dominant-baseline'];
-
+/**
+ * processAndSetConfigs 的核心功能是为每个图表生成独立的配置项，
+ * 并将其注入到 Mermaid 的配置 API 中，从而在渲染时应用这些个性化设置。
+ * 这对 Mermaid 的可配置性和图表渲染的一致性非常重要，因为它确保图表在不同环境中使用相同的设置，不会受到前一个图表配置的干扰
+ */
 function processAndSetConfigs(text: string) {
+  /**
+   * preprocessDiagram(text) 对 text（Mermaid 图表的定义文本）进行预处理，
+   * 清理内容并提取任何包含的 frontmatter（如 title、displayMode、config）以及指令（如 wrap）。
+   * preprocessDiagram 返回一个对象，包含清理后的代码（code）和配置（config）。
+   */
   const processed = preprocessDiagram(text);
+  // 调用 configApi.reset() 清空当前配置，以确保新的图表配置不会受到旧配置的影响。
   configApi.reset();
+  // 使用 configApi.addDirective(processed.config ?? {});
+  // 将提取到的 config 配置加入到 Mermaid 的全局配置中。该 config 包含图表的样式、显示模式等自定义设置。
   configApi.addDirective(processed.config ?? {});
   return processed;
 }
@@ -71,6 +83,7 @@ async function parse(
 ): Promise<ParseResult | false>;
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult>;
 async function parse(text: string, parseOptions?: ParseOptions): Promise<ParseResult | false> {
+  // addDiagrams() 会将所有支持的图表类型加载到 Mermaid 的核心系统中。
   addDiagrams();
   try {
     const { code, config } = processAndSetConfigs(text);
@@ -308,6 +321,8 @@ const render = async function (
   text: string,
   svgContainingElement?: Element
 ): Promise<RenderResult> {
+  //每种图表类型可能包含不同的解析器和渲染器，addDiagrams() 负责加载这些解析器和渲染器，并将它们与相应的图表类型绑定。
+  // 在调用 render 函数之前，addDiagrams() 会确保所有需要的图表类型都已注册，这样 Mermaid 就能识别和解析不同类型的图表定义。
   addDiagrams();
 
   const processed = processAndSetConfigs(text);
@@ -349,6 +364,7 @@ const render = async function (
   // In regular execution the svgContainingElement will be the element with a mermaid class
 
   if (svgContainingElement !== undefined) {
+    // 清理 last graph
     if (svgContainingElement) {
       svgContainingElement.innerHTML = '';
     }
@@ -390,6 +406,12 @@ const render = async function (
   let diag: Diagram;
   let parseEncounteredException;
 
+  /**
+   * 拿到一个非常重要的Diagram对象
+   * - db: 负责解析 Mermaid 文本，并将其转换为 db 中的结构化数据
+   * - parser: 负责从db获取图表数据并生成 svg图形
+   * - renderer: 负责从db获取图表数据并生成svg的图形
+   */
   try {
     diag = await Diagram.fromText(text, { title: processed.title });
   } catch (error) {
