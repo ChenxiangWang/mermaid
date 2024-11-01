@@ -37,30 +37,7 @@ graph TB
     </div>
     <pre class="mermaid">info</pre>
 
-    <script type="module">
-      import mermaid from '/mermaid.esm.mjs';
-      import flowchartELK from '/mermaid-flowchart-elk.esm.mjs';
-      await mermaid.registerExternalDiagrams([flowchartELK]);
-      async function render(str) {
-        const { svg } = await mermaid.render('dynamic', str);
-        document.getElementById('dynamicDiagram').innerHTML = svg;
-      }
-      const storeKey = window.location.pathname;
-      const code = localStorage.getItem(storeKey);
-      if (code) {
-        document.getElementById('code').value = code;
-        await render(code);
-      }
-      mermaid.initialize({
-        startOnLoad: true,
-        logLevel: 0,
-      });
-      document.getElementById('code').addEventListener('input', async (e) => {
-        const value = e.target.value;
-        localStorage.setItem(storeKey, value);
-        await render(value);
-      });
-    </script>
+    <script type="module" src="./render.js"></script>
 
     <script src="/dev/reload.js"></script>
   </body>
