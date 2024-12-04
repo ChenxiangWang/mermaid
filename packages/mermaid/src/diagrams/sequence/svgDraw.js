@@ -549,13 +549,13 @@ export const anchorElement = function (elem) {
  */
 export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
   const rect = svgDrawCommon.getNoteRect();
-  const g = bounds.anchored;
+  //const g = bounds.anchored;
   rect.x = bounds.startx;
   rect.y = bounds.starty;
   rect.class = 'activation' + (actorActivations % 3); // Will evaluate to 0, 1 or 2
   rect.width = bounds.stopx - bounds.startx;
   rect.height = verticalPos - bounds.starty;
-  drawRect(g, rect);
+  drawRect(elem, rect);
 };
 
 /**
@@ -1099,17 +1099,26 @@ const _drawMenuItemTextCandidateFunc = (function () {
   };
 })();
 
+export function patchedDrawWithDataType(datatype, fn) {
+  return function (...args) {
+    const [elem, ...others] = args;
+    const g = elem.node().tagName === 'g' ? elem : elem.append('g')?.attr('data-type', datatype);
+    return fn(g, ...others);
+  };
+}
+
 export default {
+  patchedDrawWithDataType,
   drawRect,
   drawText,
-  drawLabel,
-  drawActor,
+  drawLabel: patchedDrawWithDataType('label', drawLabel),
+  drawActor: patchedDrawWithDataType('actor', drawActor),
   drawBox,
   drawPopup,
   anchorElement,
-  drawActivation,
-  drawLoop,
-  drawBackgroundRect,
+  drawActivation: patchedDrawWithDataType('activation', drawActivation),
+  drawLoop: patchedDrawWithDataType('loop', drawLoop),
+  drawBackgroundRect: patchedDrawWithDataType('background', drawBackgroundRect),
   insertArrowHead,
   insertArrowFilledHead,
   insertSequenceNumber,

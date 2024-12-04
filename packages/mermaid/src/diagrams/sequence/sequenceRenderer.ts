@@ -865,7 +865,7 @@ export const draw = async function (_text: string, id: string, _version: string,
       case diagObj.db.LINETYPE.NOTE:
         bounds.resetVerticalPos();
         noteModel = msg.noteModel;
-        await drawNote(diagram, noteModel);
+        await svgDraw.patchedDrawWithDataType('note', (g) => drawNote(g, noteModel))(diagram);
         break;
       case diagObj.db.LINETYPE.ACTIVE_START:
         bounds.newActivation(msg, diagram, actors);
@@ -1060,7 +1060,9 @@ export const draw = async function (_text: string, id: string, _version: string,
   await drawActors(diagram, actors, actorKeys, false);
 
   for (const e of messagesToDraw) {
-    await drawMessage(diagram, e.messageModel, e.lineStartY, diagObj);
+    await svgDraw.patchedDrawWithDataType('message', (g) =>
+      drawMessage(g, e.messageModel, e.lineStartY, diagObj)
+    )(diagram);
   }
   if (conf.mirrorActors) {
     await drawActors(diagram, actors, actorKeys, true);
