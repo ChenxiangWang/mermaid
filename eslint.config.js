@@ -61,7 +61,6 @@ export default tseslint.config(
     },
     rules: {
       curly: 'error',
-      'no-console': 'error',
       'no-prototype-builtins': 'off',
       'no-unused-vars': 'off',
       'cypress/no-async-tests': 'off',
@@ -156,9 +155,6 @@ export default tseslint.config(
   },
   {
     files: ['cypress/**', 'demos/**'],
-    rules: {
-      'no-console': 'off',
-    },
   },
   {
     files: ['**/*.{js,jsx,mjs,cjs}'],

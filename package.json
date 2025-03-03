@@ -23,6 +23,7 @@
     "build:types:watch": "tsc -p ./packages/mermaid/tsconfig.json --emitDeclarationOnly --watch",
     "dev": "tsx .esbuild/server.ts",
     "dev:vite": "tsx .vite/server.ts",
+    "dev:source": "vite --config vite.dev.config.ts",
     "dev:coverage": "pnpm coverage:cypress:clean && VITE_COVERAGE=true pnpm dev:vite",
     "copy-readme": "cpy './README.*' ./packages/mermaid/ --cwd=.",
     "changeset:version": "changeset version && pnpm build && pnpm --filter mermaid run docs:release-version && pnpm --filter mermaid run docs:build && git add --all",
