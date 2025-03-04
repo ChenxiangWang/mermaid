@@ -36,6 +36,7 @@ export const insertEdgeLabel = async (elem, edge) => {
 
   // Create outer g, edgeLabel, this will be positioned after graph layout
   const edgeLabel = elem.insert('g').attr('class', 'edgeLabel');
+  appendLabelToEdge(edgeLabel, edge);
 
   // Create inner g, label, this will be positioned now for centering the text
   const label = edgeLabel.insert('g').attr('class', 'label');
@@ -68,6 +69,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     );
     const startEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
     const inner = startEdgeLabelLeft.insert('g').attr('class', 'inner');
+    appendTerminalsToEdge(startEdgeLabelLeft, edge, 'start');
     fo = inner.node().appendChild(startLabelElement);
     const slBox = startLabelElement.getBBox();
     inner.attr('transform', 'translate(' + -slBox.width / 2 + ', ' + -slBox.height / 2 + ')');
@@ -84,6 +86,7 @@ export const insertEdgeLabel = async (elem, edge) => {
       getLabelStyles(edge.labelStyle)
     );
     const startEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    appendTerminalsToEdge(startEdgeLabelRight, edge, 'start');
     const inner = startEdgeLabelRight.insert('g').attr('class', 'inner');
     fo = startEdgeLabelRight.node().appendChild(startLabelElement);
     inner.node().appendChild(startLabelElement);
@@ -100,6 +103,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     // Create the actual text element
     const endLabelElement = await createLabel(edge.endLabelLeft, getLabelStyles(edge.labelStyle));
     const endEdgeLabelLeft = elem.insert('g').attr('class', 'edgeTerminals');
+    appendTerminalsToEdge(endEdgeLabelLeft, edge, 'end');
     const inner = endEdgeLabelLeft.insert('g').attr('class', 'inner');
     fo = inner.node().appendChild(endLabelElement);
     const slBox = endLabelElement.getBBox();
@@ -117,6 +121,7 @@ export const insertEdgeLabel = async (elem, edge) => {
     // Create the actual text element
     const endLabelElement = await createLabel(edge.endLabelRight, getLabelStyles(edge.labelStyle));
     const endEdgeLabelRight = elem.insert('g').attr('class', 'edgeTerminals');
+    appendTerminalsToEdge(endEdgeLabelRight, edge, 'end');
     const inner = endEdgeLabelRight.insert('g').attr('class', 'inner');
 
     fo = inner.node().appendChild(endLabelElement);
@@ -570,5 +575,24 @@ export const insertEdge = function (elem, edge, clusterDb, diagramType, startNod
     paths.updatedPath = points;
   }
   paths.originalPath = edge.points;
+  if (svgPath.node() && startNode && endNode && edge) {
+    appendNodeInfoToEdge(svgPath, startNode, endNode, edge);
+  }
   return paths;
 };
+
+function appendLabelToEdge(labelNode, edge) {
+  labelNode.attr('for', `${edge.id}`);
+}
+
+function appendTerminalsToEdge(labelNode, edge, dataType) {
+  labelNode.attr('for', `${edge.id}`);
+  labelNode.attr('data-type', dataType);
+}
+
+function appendNodeInfoToEdge(pathNode, starNode, endNode, edge) {
+  pathNode.attr('data-type', 'edge'); // edge
+  pathNode.attr('start', starNode.domId ?? starNode.id); // start node id
+  pathNode.attr('end', endNode.domId ?? endNode.id); // end node id
+  pathNode.attr('id', `${edge.id}`); // its id
+}
