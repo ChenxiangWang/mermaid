@@ -36,38 +36,34 @@ graph TB
       <div id="dynamicDiagram"></div>
     </div>
     <pre class="mermaid">info</pre>
-    <script type="module">
-      import mermaid from './packages/mermaid/src/mermaid.ts';
-      console.log('run');
-      async function render(str) {
-        const { svg } = await mermaid.render('dynamic', str);
-        document.getElementById('dynamicDiagram').innerHTML = svg;
-      }
-      const storeKey = window.location.pathname;
-      const code = localStorage.getItem(storeKey);
-      if (code) {
-        document.getElementById('code').value = code;
-        await render(code);
-      }
-
-      console.log('hello word');
-      mermaid.initialize({
-        startOnLoad: true,
-        logLevel: 0,
-      });
-      document.addEventListener('DOMContentLoaded', () => {
-        const codeEl = document.getElementById('code');
-        if (codeEl) {
-          codeEl.addEventListener('input', async (e) => {
-            const value = e.target.value;
-            console.log('input');
-            localStorage.setItem(storeKey, value);
-            await render(value);
-          });
-        } else {
-          console.error('无法找到 id 为 code 的元素');
-        }
-      });
-    </script>
   </body>
+  <script type="module">
+    import mermaid from './packages/mermaid/src/mermaid.ts';
+    console.log('run');
+    async function render(str) {
+      const { svg } = await mermaid.render('dynamic', str);
+      document.getElementById('dynamicDiagram').innerHTML = svg;
+    }
+    const storeKey = window.location.pathname;
+    const code = localStorage.getItem(storeKey);
+    if (code) {
+      document.getElementById('code').value = code;
+      await render(code);
+    }
+    mermaid.initialize({
+      startOnLoad: true,
+      logLevel: 0,
+    });
+
+    const codeEl = document.getElementById('code');
+    if (codeEl) {
+      codeEl.addEventListener('input', async (e) => {
+        const value = e.target.value;
+        localStorage.setItem(storeKey, value);
+        await render(value);
+      });
+    } else {
+      console.error('无法找到 id 为 code 的元素');
+    }
+  </script>
 </html>
